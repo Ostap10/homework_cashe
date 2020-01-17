@@ -1,0 +1,8 @@
+%% coding: utf-8
+[{release,"homework_cache_release","1","10.2.4",
+          [{kernel,"6.2","./lib/kernel-6.2"},
+           {stdlib,"3.7.1","./lib/stdlib-3.7.1"},
+           {homework_cache,"0.1.0","./lib/homework_cache-0.1.0"},
+           {sasl,"3.3","./lib/sasl-3.3"},
+           {runtime_tools,"1.13.1","./lib/runtime_tools-1.13.1"}],
+          permanent}].
