@@ -16,8 +16,8 @@
   insert/3,
   lookup/1,
   delete_obsolete/0,
-  delete_obsolete_version_1/0,
-  lookup1/1
+  delete_obsolete_version_1/0
+
 ]).
 
 create() ->
@@ -32,11 +32,8 @@ lookup(Key) ->
   TimeStamp1 = erlang:system_time(second),
   List = ets:lookup(cache, Key),
   case List of
-    [{_Key, Value, Time}]  ->
-      case TimeStamp1 =< Time of
-        true -> {ok,Value};
-        _ -> "time is up"
-      end;
+    [{_Key, Value, Time}] when TimeStamp1 =< Time -> {ok,Value};
+    [{_Key, _Value, Time}] when TimeStamp1 > Time -> "time is up";
     _ -> []
 end.
 
@@ -51,8 +48,7 @@ delete_obsolete() ->
   delete(List_Key)
   .
 
-lookup1 (Key) ->
-  ets:lookup(cache,Key).
+
 
 delete([])->
   ok;

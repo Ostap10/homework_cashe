@@ -51,8 +51,7 @@ cache2_test_ () ->
     ?_assert(main:lookup(Key3) =:= "time is up"),
     ?_assert(main:lookup(Key1) =:= {ok,Value1}),
     ?_assert(main:lookup(Key2) =:= {ok,Value2}),
-    ?_assert(main:delete_obsolete() =:= ok),
-    ?_assert(main:lookup1(Key3) =:= [])
+    ?_assert(main:delete_obsolete() =:= ok)
   ].
 
 cache_deleteV1_test_ () ->
@@ -66,6 +65,5 @@ cache_deleteV1_test_ () ->
   ?_assert(main:lookup(Key3) =:= []),
   ?_assert(main:lookup(Key1) =:= {ok,Value1}),
   ?_assert(main:lookup(Key2) =:= "time is up"),
-  ?_assert(main:delete_obsolete_version_1() =:= ok),
-  ?_assert(main:lookup1(Key2) =:= [])
+  ?_assert(main:delete_obsolete_version_1() =:= ok)
   ].

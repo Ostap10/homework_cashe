@@ -1,2 +1,5 @@
 *.beam
-erlang.mk
+*erlang.mk
+.idea
+_rel
+*.d
