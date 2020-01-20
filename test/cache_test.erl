@@ -26,22 +26,46 @@ cache_test_ () ->
   Time2 = 120,
   Time3 = 60,
   [
-
-
     ?_assert(main:create() =:= ok),
 
     ?_assert(main:insert(Key1, Value1, Time1) =:= ok),
     ?_assert(main:insert(Key2, Value2, Time2) =:= ok),
     ?_assert(main:insert(Key3, Value3, Time3) =:= ok),
 
-    ?_assert(main:lookup(Key1) =:= {ok,[Value1]}),
-    ?_assert(main:lookup(Key2) =:= {ok,[Value2]}),
-    ?_assert(main:lookup(Key3) =:= {ok,[Value3]}),
+    ?_assert(main:lookup(Key1) =:= {ok,Value1}),
+    ?_assert(main:lookup(Key2) =:= {ok,Value2}),
+    ?_assert(main:lookup(Key3) =:= {ok,Value3})
+    ].
 
-    timer:sleep(60000),
+
+cache2_test_ () ->
+  Key1 = 1,
+  Key2 = 2,
+  Key3 = 3,
+
+  Value1 = one,
+  Value2 = two,
+  timer:sleep(61000),
+
+  [
     ?_assert(main:lookup(Key3) =:= "time is up"),
-    ?_assert(main:lookup(Key1) =:= {ok,[Value1]}),
-    ?_assert(main:lookup(Key2) =:= {ok,[Value2]}),
+    ?_assert(main:lookup(Key1) =:= {ok,Value1}),
+    ?_assert(main:lookup(Key2) =:= {ok,Value2}),
     ?_assert(main:delete_obsolete() =:= ok),
     ?_assert(main:lookup1(Key3) =:= [])
+  ].
+
+cache_deleteV1_test_ () ->
+  Key1 = 1,
+  Key2 = 2,
+  Key3 = 3,
+
+  Value1 = one,
+  timer:sleep(61000),
+  [
+  ?_assert(main:lookup(Key3) =:= []),
+  ?_assert(main:lookup(Key1) =:= {ok,Value1}),
+  ?_assert(main:lookup(Key2) =:= "time is up"),
+  ?_assert(main:delete_obsolete_version_1() =:= ok),
+  ?_assert(main:lookup1(Key2) =:= [])
   ].

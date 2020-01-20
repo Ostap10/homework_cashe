@@ -16,6 +16,7 @@
   insert/3,
   lookup/1,
   delete_obsolete/0,
+  delete_obsolete_version_1/0,
   lookup1/1
 ]).
 
@@ -24,27 +25,26 @@ create() ->
   ok.
 
 insert(Key, Value, Time) ->
-  ets:insert(cache, {Key, Value, Time, erlang:monotonic_time(second)}),
+  ets:insert(cache, {Key, Value, Time + erlang:system_time(second)}),
  ok.
 
-lookup(Key1) ->
-  TimeStamp1 = erlang:monotonic_time(second),
-  MS = ets:fun2ms(
-    fun({Key, Value, Time, TimeStamp})
-        when TimeStamp1 - TimeStamp =< Time andalso Key == Key1 ->
-            Value
-    end),
-  H = ets:select(cache, MS),
-  case H of
-      [] -> "time is up";
-      _ -> {ok, H}
-  end.
+lookup(Key) ->
+  TimeStamp1 = erlang:system_time(second),
+  List = ets:lookup(cache, Key),
+  case List of
+    [{_Key, Value, Time}]  ->
+      case TimeStamp1 =< Time of
+        true -> {ok,Value};
+        _ -> "time is up"
+      end;
+    _ -> []
+end.
 
 delete_obsolete() ->
-  TimeStamp1 = erlang:monotonic_time(second),
+  TimeStamp1 = erlang:system_time(second),
   MS = ets:fun2ms(
-    fun({Key, _Value, Time, TimeStamp})
-      when TimeStamp1 - TimeStamp > Time  ->
+    fun({Key, _Value, Time})
+      when TimeStamp1 > Time  ->
         Key
     end),
   List_Key = ets:select(cache, MS),
@@ -59,3 +59,21 @@ delete([])->
 delete([H | T]) ->
   ets:delete(cache, H),
   delete(T).
+
+
+
+delete_obsolete_version_1() ->
+  Timestamp1 = erlang:system_time(second),
+   Key1 = ets:first(cache),
+   List_key = next(Key1, [], Timestamp1),
+   delete(List_key).
+
+next('$end_of_table', List_key,_Timestamp1) ->
+  List_key;
+next(Key, List_key, Timestamp1) ->
+  [{_Key, _Value, Time}] = ets:lookup(cache, Key),
+  KeyNext = ets:next(cache, Key),
+  case Time < Timestamp1 of
+      true ->  next(KeyNext, [Key | List_key], Timestamp1);
+      _ -> next(KeyNext, List_key, Timestamp1)
+  end.
