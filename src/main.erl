@@ -45,10 +45,7 @@ delete_obsolete() ->
         Key
     end),
   List_Key = ets:select(cache, MS),
-  delete(List_Key)
-  .
-
-
+  delete(List_Key).
 
 delete([])->
   ok;
@@ -56,10 +53,8 @@ delete([H | T]) ->
   ets:delete(cache, H),
   delete(T).
 
-
-
 delete_obsolete_version_1() ->
-  Timestamp1 = erlang:system_time(second),
+   Timestamp1 = erlang:system_time(second),
    Key1 = ets:first(cache),
    List_key = next(Key1, [], Timestamp1),
    delete(List_key).
