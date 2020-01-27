@@ -33,10 +33,10 @@ lookup(Key) ->
   gen_server:call(?MODULE, {lookup, Key}).
 
 delete_obsolete() ->
-  gen_server:call(?MODULE, {delete_obsolete}).
+  gen_server:cast(?MODULE, {delete_obsolete}).
 
 delete_obsolete_version_1() ->
-  gen_server:call(?MODULE, {delete_obsolete_version_1}).
+  gen_server:cast(?MODULE, {delete_obsolete_version_1}).
 
 start() ->
   gen_server:start({local, main_server}, ?MODULE, [], []).
@@ -49,16 +49,18 @@ handle_call({insert, Key, Value, Time}, _Form, _State) ->
   {reply, NewState, NewState};
 handle_call({lookup, Key}, _Form, _State) ->
   NewState = main:lookup(Key),
-  {reply, NewState, NewState};
-handle_call({delete_obsolete}, _Form, _State) ->
-  NewState = main:delete_obsolete(),
-  {reply, NewState,NewState};
-handle_call({delete_obsolete_version_1}, _Form, _State) ->
-  NewState = main:delete_obsolete_version_1(),
   {reply, NewState, NewState}.
 
-handle_cast(_Request, State) ->
-  {noreply, State}.
+%%handle_call({delete_obsolete_version_1}, _Form, _State) ->
+%%  NewState = main:delete_obsolete_version_1(),
+%%  {reply, NewState, NewState}.
+
+handle_cast({delete_obsolete}, _State) ->
+  NewState = main:delete_obsolete(),
+  {noreply, NewState};
+handle_cast({delete_obsolete_version_1}, _State) ->
+  NewState = main:delete_obsolete_version_1(),
+  {noreply, NewState}.
 
 handle_info(_Info, State) ->
   {noreply, State}.
