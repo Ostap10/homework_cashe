@@ -26,13 +26,13 @@ create() ->
 
 insert(Key, Value, Time) ->
   ets:insert(cache, {Key, Value, Time + erlang:system_time(second)}),
- ok.
+ <<"ok">>.
 
 lookup(Key) ->
   TimeStamp1 = erlang:system_time(second),
   List = ets:lookup(cache, Key),
   case List of
-    [{_Key, Value, Time}] when TimeStamp1 =< Time -> {ok,Value};
+    [{_Key, Value, Time}] when TimeStamp1 =< Time -> Value;
     [{_Key, _Value, Time}] when TimeStamp1 > Time -> "time is up";
     _ -> []
 end.
