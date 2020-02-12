@@ -42,13 +42,13 @@ start() ->
   gen_server:start({local, main_server}, ?MODULE, [], []).
 
 init(_Args) ->
-  {ok, main:create()}.
+  {ok, cashe_mnesia:start()}.
 
 handle_call({insert, Key, Value, Time}, _Form, _State) ->
-  NewState = main:insert(Key, Value, Time),
+  NewState = cashe_mnesia:insert(Key, Value, Time),
   {reply, NewState, NewState};
 handle_call({lookup, Key}, _Form, _State) ->
-  NewState = main:lookup(Key),
+  NewState = cashe_mnesia:lookup(Key),
   {reply, NewState, NewState}.
 
 %%handle_call({delete_obsolete_version_1}, _Form, _State) ->

@@ -4,7 +4,11 @@
 -export([start/2]).
 -export([stop/1]).
 
+-include("mnesia_header.hrl").
+
 start(_Type, _Args) ->
+	application:start(mnesia),
+
 	Dispatch = cowboy_router:compile([
 		{'_', [
 			{"/api/cache_server", cache_server, []}
